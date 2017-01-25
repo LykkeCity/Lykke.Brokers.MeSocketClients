@@ -7,12 +7,12 @@
   },
 
   "dependencies": {
-    "Core": "1.0.0",
-    "Repositories": "1.0.0",
-    "Services": "1.0.0",
     "Microsoft.Extensions.Configuration": "1.1.0",
     "Microsoft.Extensions.Configuration.Binder": "1.1.0",
-    "Microsoft.Extensions.Caching.Redis": "1.1.0-*"
+    "Microsoft.Extensions.Caching.Redis": "1.1.0-*",
+    "Core": "1.0.0",
+    "Repositories": "1.0.0",
+    "Services": "1.0.0"
   },
 
   "frameworks": {
