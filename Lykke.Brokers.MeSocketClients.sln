@@ -14,11 +14,11 @@ Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Lykke.Brokers.MeSocketClien
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastucture", "Infrastucture", "{734D6328-7BAF-4467-A848-D8C6F419A8EB}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Core", "src\Infrastructure\Core\Core.xproj", "{EB19EAC0-F7A1-458D-908B-AE39D1B0CDDF}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Core", "src\Core\Core.xproj", "{EB19EAC0-F7A1-458D-908B-AE39D1B0CDDF}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Repositories", "src\Infrastructure\Repositories\Repositories.xproj", "{5B2FD1F4-E3B3-4CFE-A0C0-844F82747443}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Repositories", "src\Repositories\Repositories.xproj", "{5B2FD1F4-E3B3-4CFE-A0C0-844F82747443}"
 EndProject
-Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Services", "src\Infrastructure\Services\Services.xproj", "{2F501A10-99F9-4523-AB36-479FDFC91DDB}"
+Project("{8BB2217D-0F2D-49D1-97BC-3654ED321F3B}") = "Services", "src\Services\Services.xproj", "{2F501A10-99F9-4523-AB36-479FDFC91DDB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
