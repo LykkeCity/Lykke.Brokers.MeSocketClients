@@ -1,0 +1,37 @@
+﻿{
+  "version": "1.0.0",
+
+  "buildOptions": {
+    "emitEntryPoint": true,
+    "debugType": "portable"
+  },
+
+  "dependencies": {
+    "Core": "1.0.0",
+    "Repositories": "1.0.0",
+    "Services": "1.0.0",
+    "Microsoft.Extensions.Configuration": "1.1.0",
+    "Microsoft.Extensions.Configuration.Binder": "1.1.0",
+    "Microsoft.Extensions.Caching.Redis": "1.1.0-*"
+  },
+
+  "frameworks": {
+    "netcoreapp1.0": {
+      "dependencies": {
+        "Microsoft.NETCore.App": {
+          "type": "platform",
+          "version": "1.1.0"
+        }
+      },
+      "imports": "portable-net45"
+    }
+  },
+  "publishOptions": {
+    "include": [
+      "docker-compose.yml",
+      "Dockerfile",
+      ".dockerignore",
+      "appsettings.json"
+    ]
+  }
+}
