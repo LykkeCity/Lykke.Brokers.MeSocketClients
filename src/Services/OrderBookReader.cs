@@ -24,8 +24,8 @@ namespace Services
             _orderBooksHandler = orderBooksHandler;
             _log = log;
             _clientTcpSocket = new SimpleClientTcpSocket("OrderBookSocket",
-                new IPEndPoint(IPAddress.Parse(_settings.MatchingEngine.IpEndpoint.Host),
-                    _settings.MatchingEngine.ServerOrderBookPort), 2, log, tcpDeserializer, HandleData);
+                new IPEndPoint(IPAddress.Parse(_settings.MatchingEngine.IpEndpoint.InternalHost),
+                    _settings.MatchingEngine.ServerOrderBookPort), 2, log, tcpDeserializer, HandleData, 4, 4);
         }
 
         public async Task StartRead()

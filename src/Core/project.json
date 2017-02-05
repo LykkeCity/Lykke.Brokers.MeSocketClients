@@ -1,8 +1,8 @@
-﻿{
+{
   "version": "1.0.0",
 
   "dependencies": {
-    "Lykke.Common": "1.1.2"
+    "Lykke.Common": "1.1.7"
   },
 
   "frameworks": {

@@ -19,9 +19,8 @@ namespace Lykke.Brokers.MeSocketClients.Binders
         public ContainerBuilder Bind(BaseSettings settings)
         {
             var logToTable = new LogToTable(new AzureTableStorage<LogEntity>(settings.Db.LogsConnString, "LogMeSocketClients", null));
-            var log = new LogToTableAndConsole(logToTable, new LogToConsole());
             var ioc = new ContainerBuilder();
-            InitContainer(ioc, settings, log);
+            InitContainer(ioc, settings, logToTable);
             return ioc;
         }
 
@@ -37,7 +36,7 @@ namespace Lykke.Brokers.MeSocketClients.Binders
 
             var redis = new RedisCache(new RedisCacheOptions
             {
-                Configuration = settings.CacheSettings.RedisConfiguration,
+                Configuration = $"{settings.CacheSettings.RedisInternalHost}:{settings.CacheSettings.RedisPort}",
                 InstanceName = settings.CacheSettings.FinanceDataCacheInstance
             });
 

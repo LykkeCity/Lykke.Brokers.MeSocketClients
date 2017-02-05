@@ -11,6 +11,9 @@
         public string RedisConfiguration { get; set; }
 
         public string OrderBooksCacheKeyPattern { get; set; }
+
+        public int RedisPort { get; set; }
+        public string RedisInternalHost { get; set; }
     }
 
     public static class CacheSettingsExt
@@ -29,7 +32,7 @@
 
     public class IpEndpointSettings
     {
-        public string Host { get; set; }
+        public string InternalHost { get; set; }
     }
 
     public class BaseSettings

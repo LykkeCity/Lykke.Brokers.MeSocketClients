@@ -36,22 +36,32 @@ namespace Services
 
         public async Task<Tuple<object, int>> Deserialize(Stream stream)
         {
-            const int headerSize = 5;
-
-            var dataType = (MeDataType)await stream.ReadByteFromSocket();
-
-            var datalen = await stream.ReadIntFromSocket();
-
-            var data = await stream.ReadFromSocket(datalen);
-            var memStream = new MemoryStream(data) { Position = 0 };
-
-            if (Types.ContainsKey(dataType))
+            try
             {
-                var result = Serializer.NonGeneric.Deserialize(Types[dataType], memStream);
-                return new Tuple<object, int>(result, headerSize + datalen);
-            }
+                const int headerSize = 5;
 
-            await _log.WriteWarningAsync("MeTcpDeserializer", "Deserialize", dataType.ToString(), "Unkonw data type");
+                var dataType = (MeDataType)await stream.ReadByteFromSocket();
+
+                var datalen = await stream.ReadIntFromSocket();
+
+                var data = await stream.ReadFromSocket(datalen);
+                var memStream = new MemoryStream(data) { Position = 0 };
+
+                if (Types.ContainsKey(dataType))
+                {
+                    if (dataType == MeDataType.Ping)
+                        return null;
+
+                    var result = Serializer.NonGeneric.Deserialize(Types[dataType], memStream);
+                    return new Tuple<object, int>(result, headerSize + datalen);
+                }
+
+                await _log.WriteWarningAsync("MeTcpDeserializer", "Deserialize", dataType.ToString(), "Unkonw data type");
+            }
+            catch (Exception ex)
+            {
+                await _log.WriteErrorAsync("MeTcpDeserializer", "Deserialize", "", ex);
+            }
             return null;
         }
 
@@ -126,7 +136,7 @@ namespace Services
             {
                 AssetPair = meModel.Asset,
                 IsBuy = meModel.IsBuy,
-                Prices = meModel.Levels.Select(x => new VolumePrice
+                Prices = meModel.Levels?.Select(x => new VolumePrice
                 {
                     Price = x.Price.ParseAnyDouble(),
                     Volume = x.Volume.ParseAnyDouble()

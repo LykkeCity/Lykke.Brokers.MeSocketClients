@@ -15,10 +15,30 @@ namespace Core.Tools
         private readonly ITcpDeserializer _tcpDeserializer;
         private readonly ILog _log;
         private readonly Func<object, Task> _dataHandler;
-        public int Id { get;}
+        public int Id { get; }
         public bool Disconnected { get; private set; }
         private readonly object _lockObject = new object();
-        internal DateTime LastReadData = DateTime.UtcNow;
+
+        private DateTime _lastReadData = DateTime.UtcNow;
+        private readonly object _lastReadDataLock = new object();
+
+        internal DateTime LastReadData
+        {
+            get
+            {
+                lock (_lastReadDataLock)
+                {
+                    return _lastReadData;
+                }
+            }
+            set
+            {
+                lock (_lastReadDataLock)
+                {
+                    _lastReadData = value;
+                }
+            }
+        }
 
         public SimpleTcpSocketConnection(SimpleClientTcpSocket socket, TcpClient tcpClient,
             ITcpDeserializer tcpDeserializer, int id, ILog log, Func<object, Task> dataHandler)
@@ -42,7 +62,7 @@ namespace Core.Tools
                         await Send(pingPacket);
 
 
-                        await Task.Delay(_socket .PacketDeliveryTimeOut* 1000);
+                        await Task.Delay(_socket.PacketDeliveryTimeOut*1000);
 
                         var now = DateTime.UtcNow;
                         var seconds = (now - LastReadData).TotalSeconds;
@@ -68,10 +88,20 @@ namespace Core.Tools
             while (!Disconnected)
             {
                 LastReadData = DateTime.UtcNow;
+                try
+                {
+                    var msg = await _tcpDeserializer.Deserialize(stream);
 
-                var msg = await _tcpDeserializer.Deserialize(stream);
+                    if (msg != null)
+                    {
+                        await _dataHandler(msg.Item1);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _log.WriteErrorAsync("SimpleClientTcpSocket", "ReadData", "", ex).Wait();
+                }
 
-                await _dataHandler(msg.Item1);
             }
         }
 
