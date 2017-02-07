@@ -17,8 +17,8 @@ namespace Services
 
             ioc.RegisterInstance(rabbitSettings);
 
-            ioc.RegisterType<OrderBookReader>().As<IOrderBookReader>();
-            ioc.RegisterType<OrderBooksHandler>().As<IOrderBooksHandler>();
+            ioc.RegisterType<OrderBookReader>().As<IOrderBookReader>().SingleInstance();
+            ioc.RegisterType<OrderBooksHandler>().As<IOrderBooksHandler>().SingleInstance();
         }
     }
 }
