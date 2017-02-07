@@ -31,7 +31,7 @@ namespace Lykke.Brokers.MeSocketClients.Binders
             ioc.RegisterInstance(log);
             ioc.RegisterInstance(settings);
 
-            ioc.BindServices();
+            ioc.BindServices(settings);
             ioc.BindAzure(settings);
 
             var redis = new RedisCache(new RedisCacheOptions

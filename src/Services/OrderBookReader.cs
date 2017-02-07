@@ -1,45 +1,42 @@
-﻿using System.Net;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Common.Log;
-using Core;
+using Core.Domain;
 using Core.Services;
-using Core.Tools;
+using Lykke.RabbitMqBroker;
+using Lykke.RabbitMqBroker.Subscriber;
+using Services.Tools;
 
 namespace Services
 {
     public class OrderBookReader : IOrderBookReader
     {
-        private readonly BaseSettings _settings;
         private readonly IOrderBooksHandler _orderBooksHandler;
-        private readonly ILog _log;
+        private readonly RabbitMqSubscriber<OrderBook> _connector;
 
-        private readonly SimpleClientTcpSocket _clientTcpSocket;
-
-        public OrderBookReader(BaseSettings settings,
+        public OrderBookReader(RabbitMqSettings settings,
             IOrderBooksHandler orderBooksHandler,
-            ITcpDeserializer tcpDeserializer,
             ILog log)
         {
-            _settings = settings;
             _orderBooksHandler = orderBooksHandler;
-            _log = log;
-            _clientTcpSocket = new SimpleClientTcpSocket("OrderBookSocket",
-                new IPEndPoint(IPAddress.Parse(_settings.MatchingEngine.IpEndpoint.InternalHost),
-                    _settings.MatchingEngine.ServerOrderBookPort), 2, log, tcpDeserializer, HandleData, 4, 4);
+
+            _connector =
+                new RabbitMqSubscriber<OrderBook>(settings)
+                    .SetMessageDeserializer(new OrderBookDeserializer())
+                    .SetMessageReadStrategy(new MessageReadWithTemporaryQueueStrategy())
+                    .Subscribe(HandleData)
+                    .SetLogger(log);
         }
 
-        public async Task StartRead()
+        public void StartRead()
         {
-            await _clientTcpSocket.Start();
+            _connector.Start();
         }
 
-        private async Task HandleData(object data)
+        private async Task HandleData(IOrderBook orderBook)
         {
-            var result = data as MeOrderBookModel;
-
-            if (result != null)
+            if (orderBook != null)
             {
-                await _orderBooksHandler.HandleOrderBook(result.ConvertToDomainModel());
+                await _orderBooksHandler.HandleOrderBook(orderBook);
             }
         }
     }

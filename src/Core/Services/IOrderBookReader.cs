@@ -10,6 +10,6 @@ namespace Core.Services
     
     public interface IOrderBookReader
     {
-        Task StartRead();
+        void StartRead();
     }
 }

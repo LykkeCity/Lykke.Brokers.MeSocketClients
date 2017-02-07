@@ -37,7 +37,7 @@ namespace Lykke.Brokers.MeSocketClients
             try
             {
                 var orderBookReader = container.Resolve<IOrderBookReader>();
-                await orderBookReader.StartRead();
+                orderBookReader.StartRead();
             }
             catch (Exception ex)
             {

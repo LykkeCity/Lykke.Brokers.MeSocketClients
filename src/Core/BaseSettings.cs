@@ -27,7 +27,25 @@
     public class MatchingOrdersSettings
     {
         public IpEndpointSettings IpEndpoint { get; set; }
-        public int ServerOrderBookPort { get; set; }
+        public RabbitMqSettings RabbitMq { get; set; }
+    }
+
+    public class RabbitMqSettings
+    {
+        public string Host { get; set; }
+        public string ExternalHost { get; set; }
+        public string ExchangeOrderbook { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+        public string Port { get; set; }
+    }
+
+    public static class RabbitMqSettingsExt
+    {
+        public static string GetConnectionString (this RabbitMqSettings settings)
+        {
+            return $"amqp://{settings.Username}:{settings.Password}@{settings.Host}:{settings.Port}";
+        }
     }
 
     public class IpEndpointSettings
