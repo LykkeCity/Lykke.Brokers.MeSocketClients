@@ -34,6 +34,14 @@ namespace Lykke.Brokers.MeSocketClients
             var log = container.Resolve<ILog>();
 
             await log.WriteInfoAsync("MeSocketClients", "Main", "", "Starting...");
+
+            await InitOrderBooks(container, log);
+
+            await StartReadOrderBooks(container, log);
+        }
+
+        private static async Task StartReadOrderBooks(IContainer container, ILog log)
+        {
             try
             {
                 var orderBookReader = container.Resolve<IOrderBookReader>();
@@ -44,6 +52,30 @@ namespace Lykke.Brokers.MeSocketClients
                 await log.WriteErrorAsync("MeSocketClients", "Main", "", ex);
                 throw;
             }
+        }
+
+        private static async Task InitOrderBooks(IContainer container, ILog log)
+        {
+            await log.WriteInfoAsync("MeSocketClients", "Main", "", "Init order books");
+
+            bool initilized = false;
+            while (!initilized)
+            {
+                try
+                {
+                    var orderBookInitializer = container.Resolve<IOrderBookInitializer>();
+                    await orderBookInitializer.InitOrderBooks();
+                    initilized = true;
+                }
+                catch (Exception ex)
+                {
+                    await log.WriteErrorAsync("MeSocketClients", "Main", "Error on orderbook init. Retry in 5 seconds", ex);
+                }
+
+                await Task.Delay(5000);
+            }
+
+            await log.WriteInfoAsync("MeSocketClients", "Main", "", "Init OK.");
         }
     }
 }

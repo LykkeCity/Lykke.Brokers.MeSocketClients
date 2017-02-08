@@ -11,6 +11,7 @@
     "Microsoft.Extensions.Configuration.Json": "1.1.0",
     "protobuf-net": "2.1.0",
     "Repositories": "1.0.0",
+    "RestSharp.NetCore": "105.2.4-rc4-24214-01",
     "System.Reflection": "4.3.0"
   },
 

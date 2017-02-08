@@ -1,4 +1,6 @@
-﻿namespace Core
+﻿using System;
+
+namespace Core
 {
     public class DbSettings
     {
@@ -28,6 +30,7 @@
     {
         public IpEndpointSettings IpEndpoint { get; set; }
         public RabbitMqSettings RabbitMq { get; set; }
+        public string HttpOrderBookPort { get; set; }
     }
 
     public class RabbitMqSettings
@@ -40,11 +43,16 @@
         public string Port { get; set; }
     }
 
-    public static class RabbitMqSettingsExt
+    public static class Ext
     {
         public static string GetConnectionString (this RabbitMqSettings settings)
         {
             return $"amqp://{settings.Username}:{settings.Password}@{settings.Host}:{settings.Port}";
+        }
+
+        public static Uri GetOrderBookInitUri(this MatchingOrdersSettings settings)
+        {
+            return new Uri($"http://{settings.IpEndpoint.InternalHost}:{settings.HttpOrderBookPort}/orderBooks");
         }
     }
 
