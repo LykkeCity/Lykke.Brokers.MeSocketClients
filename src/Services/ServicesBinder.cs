@@ -2,6 +2,7 @@
 using Core;
 using Core.Services;
 using RestSharp;
+using StackExchange.Redis;
 using RabbitMqSettings = Lykke.RabbitMqBroker.RabbitMqSettings;
 
 namespace Services
@@ -10,6 +11,19 @@ namespace Services
     {
         public static void BindServices(this ContainerBuilder ioc, BaseSettings settings)
         {
+            var redis = ConnectionMultiplexer.Connect(settings.CacheSettings.RedisInternalHost);
+
+            ioc.RegisterInstance(redis).SingleInstance();
+            ioc.Register(
+                c =>
+                    c.Resolve<ConnectionMultiplexer>()
+                        .GetServer(settings.CacheSettings.RedisInternalHost, settings.CacheSettings.RedisPort));
+
+            ioc.Register(
+                c =>
+                    c.Resolve<ConnectionMultiplexer>()
+                        .GetDatabase());
+
             var rabbitSettings = new RabbitMqSettings
             {
                 ConnectionString = settings.MatchingEngine.RabbitMq.GetConnectionString(),

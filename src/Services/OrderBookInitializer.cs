@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
@@ -8,6 +9,7 @@ using Core.Services;
 using RestSharp;
 using Common;
 using Core.Domain;
+using StackExchange.Redis;
 
 namespace Services
 {
@@ -15,18 +17,27 @@ namespace Services
     {
         private readonly IOrderBooksHandler _orderBooksHandler;
         private readonly IRestClient _restClient;
+        private readonly BaseSettings _settings;
         private readonly ILog _log;
+        private readonly IServer _redisServer;
+        private readonly IDatabase _redisDatabase;
 
-        public OrderBookInitializer(IOrderBooksHandler orderBooksHandler, IRestClient restClient, BaseSettings settings, ILog log)
+        public OrderBookInitializer(IOrderBooksHandler orderBooksHandler, IRestClient restClient,
+            BaseSettings settings, ILog log, IServer redisServer, IDatabase redisDatabase)
         {
             _orderBooksHandler = orderBooksHandler;
             _restClient = restClient;
+            _settings = settings;
             _log = log;
+            _redisServer = redisServer;
+            _redisDatabase = redisDatabase;
             _restClient.BaseUrl = settings.MatchingEngine.GetOrderBookInitUri();
         }
 
         public async Task InitOrderBooks()
         {
+            ClearExistingRecords();
+
             var request = new RestRequest(Method.GET);
 
             var t = new TaskCompletionSource<IRestResponse>();
@@ -55,6 +66,11 @@ namespace Services
             await _log.WriteErrorAsync("OrderBookInitializer", "InitOrderBooks", "", exception);
 
             throw exception;
+        }
+
+        private void ClearExistingRecords()
+        {
+            _redisDatabase.KeyDelete(_redisServer.Keys().ToArray());
         }
     }
 }

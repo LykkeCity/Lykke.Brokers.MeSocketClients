@@ -12,6 +12,7 @@
     "protobuf-net": "2.1.0",
     "Repositories": "1.0.0",
     "RestSharp.NetCore": "105.2.4-rc4-24214-01",
+    "StackExchange.Redis": "1.2.1",
     "System.Reflection": "4.3.0"
   },
 
